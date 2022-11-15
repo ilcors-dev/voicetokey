@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import AccessToken from './components/AccessToken';
 import AudioSelector from './components/AudioSelector';
 import VoiceRecognizerRun from './components/VoiceRecognizerRun';
+import WordKeyMapper from './components/WordKeyMapper';
 import settingsManager from './composables/useSetting';
 
 function App() {
   const [accessToken, setAccessToken] = useState('');
   const [selectedAudioDevice, setSelectedAudioDevice] = useState('');
+  const [selectedAudioDeviceIndex, setSelectedAudioDeviceIndex] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -25,12 +27,17 @@ function App() {
       <AudioSelector
         selectedAudioDevice={selectedAudioDevice}
         setSelectedAudioDevice={setSelectedAudioDevice}
+        selectedAudioDeviceIndex={selectedAudioDeviceIndex}
+        setSelectedAudioDeviceIndex={setSelectedAudioDeviceIndex}
+        className="mb-10"
       />
+      <WordKeyMapper />
 
       <div className="mt-10">
-        <h1 className="mb-4 text-2xl font-semibold">Selected Audio Device</h1>
-        <p>{selectedAudioDevice}</p>
-        <VoiceRecognizerRun />
+        <VoiceRecognizerRun
+          accessToken={accessToken}
+          inputDeviceIndex={selectedAudioDeviceIndex}
+        />
       </div>
     </div>
   );

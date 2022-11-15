@@ -5,5 +5,13 @@
 @tailwind utilities;
 
 html {
-	font-family: 'Roboto', sans-serif;
+  font-family: 'Roboto', sans-serif;
+}
+
+.text-input {
+  @apply block w-full rounded border border-black p-2 text-sm text-gray-900 focus:border-black focus:ring-black  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-black dark:focus:ring-black;
+}
+
+.btn-primary {
+  @apply rounded border border-black px-4 py-2 hover:bg-gray-200;
 }

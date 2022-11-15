@@ -12,12 +12,14 @@
     "format:fix": "prettier --write --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@formkit/auto-animate": "^1.0.0-beta.3",
     "@tauri-apps/api": "^1.2.0",
     "flowbite": "^1.5.3",
     "flowbite-react": "^0.3.4",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.0",
     "tauri-settings": "^0.1.2"
   },
   "devDependencies": {

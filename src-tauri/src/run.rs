@@ -7,7 +7,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 static LISTENING: AtomicBool = AtomicBool::new(false);
 
 #[tauri::command]
-pub fn run(
+pub fn run_voice_recognizer(
     access_key: String,
     input_device_index: i32,
     keyword_paths: Vec<String>,
@@ -52,4 +52,9 @@ pub fn run(
 
     println!("\nStopping...");
     recorder.stop().expect("Failed to stop audio recording");
+}
+
+#[tauri::command]
+pub fn stop_voice_recognizer() {
+    LISTENING.store(false, Ordering::SeqCst);
 }

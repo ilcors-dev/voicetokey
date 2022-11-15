@@ -5,16 +5,23 @@ import settingsManager from '../composables/useSetting';
 interface Props {
   setSelectedAudioDevice: (device: string) => void;
   selectedAudioDevice: string;
+  setSelectedAudioDeviceIndex: (index: number) => void;
+  selectedAudioDeviceIndex: number;
+  className?: string;
 }
 
 const AudioSelector = ({
   setSelectedAudioDevice,
   selectedAudioDevice,
+  setSelectedAudioDeviceIndex,
+  selectedAudioDeviceIndex,
+  className,
 }: Props) => {
   const [audioDevices, setAudioDevices] = useState<string[]>([]);
 
   const set = async (device: string) => {
     setSelectedAudioDevice(device);
+    setSelectedAudioDeviceIndex(audioDevices.indexOf(device));
     settingsManager.setCache('audioDevice', device);
     settingsManager.setCache('audioDeviceIndex', audioDevices.indexOf(device));
 
@@ -33,7 +40,7 @@ const AudioSelector = ({
   }, []);
 
   return (
-    <div>
+    <div className={className}>
       <h1 className="mb-4 text-2xl font-semibold">Audio Selector</h1>
       <ul>
         {audioDevices.map((device, i) => (
@@ -48,8 +55,7 @@ const AudioSelector = ({
               name="bordered-radio"
               onChange={() => set(device)}
               checked={device === selectedAudioDevice}
-              className="h-4 w-4 border-gray-300 bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-gray-900 dark:border-gray-600
-              dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-black"
+              className="h-4 w-4 border-gray-300 bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-black"
             />
             <label
               htmlFor={`${device}-${i}-input`}
