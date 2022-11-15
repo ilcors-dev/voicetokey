@@ -11,9 +11,8 @@ pub fn get_audio_devices() -> Vec<String> {
 
     match audio_devices {
         Ok(audio_devices) => {
-            for (idx, device) in audio_devices.iter().enumerate() {
+            for (_idx, device) in audio_devices.iter().enumerate() {
                 devices.push(String::from(device));
-                // println!("index: {}, device name: {:?}", idx, device);
             }
         }
         Err(err) => panic!("Failed to get audio devices: {}", err),

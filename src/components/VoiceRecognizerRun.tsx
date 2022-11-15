@@ -21,10 +21,10 @@ const VoiceRecognizerRun = ({
     setIsListening(!isListening);
 
     await invoke('run_voice_recognizer', {
-      access_key: accessToken,
-      input_device_index: inputDeviceIndex,
-      keyword_paths: keywordPaths,
-      model_path: modelPath,
+      accessKey: accessToken,
+      inputDeviceIndex: inputDeviceIndex,
+      keywordPaths: keywordPaths,
+      modelPath: modelPath,
     });
 
     toast('Started listening.');
