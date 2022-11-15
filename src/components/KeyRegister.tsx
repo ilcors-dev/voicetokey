@@ -49,6 +49,8 @@ const KeyRegister = ({ className, keys, setKey }: Props) => {
       if (event.key === 'Enter') {
         setIsListening(false);
 
+        toast.success('Key combination saved.');
+
         setKey(keyCombination);
         return;
       }
