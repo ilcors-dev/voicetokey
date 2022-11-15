@@ -1,46 +1,93 @@
+import { uniq } from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { BsKeyboardFill } from 'react-icons/bs';
+import KeyCollection from './KeyCollection';
 
 interface Props {
   className?: string;
+  keys: string[];
+  setKey: (keyCombination: string[]) => void;
 }
 
-const KeyRegister = ({ className }: Props) => {
+const KeyRegister = ({ className, keys, setKey }: Props) => {
   const [isListening, setIsListening] = useState(false);
-  const [count, setCount] = useState(0);
+  const [keyCombination, setKeyCombination] = useState<string[]>(keys);
 
-  // handle what happens on key press
-  const handleKeyPress = useCallback(
+  const startListening = () => {
+    toast.custom(
+      <div className="rounded border border-black bg-white p-4 text-black">
+        <p>
+          Press <b>any key</b> to register the combination.
+        </p>
+        <p>
+          Press <b>Esc</b> to cancel
+        </p>
+        <p>
+          Press <b>Enter</b> to save.
+        </p>
+        <p>
+          Press <b>Del</b> to remove last key.
+        </p>
+      </div>,
+    );
+    setIsListening(true);
+  };
+
+  const handleKeyRegister = useCallback(
     (event: KeyboardEvent) => {
       if (!isListening) {
         return;
       }
 
-      setCount(count + 1);
+      if (event.key === 'Escape') {
+        setIsListening(false);
+        setKeyCombination([]);
+        return;
+      }
 
-      console.log(`Key pressed: ${event.key}`);
+      if (event.key === 'Enter') {
+        setIsListening(false);
+
+        setKey(keyCombination);
+        return;
+      }
+
+      if (event.key === 'Backspace') {
+        setKeyCombination(keyCombination.slice(0, -1));
+        return;
+      }
+
+      setKeyCombination(
+        uniq([...keyCombination, event.key]).sort(
+          (a: string, b: string) => b.length - a.length,
+        ),
+      );
     },
-    [isListening],
+    [isListening, keyCombination],
   );
 
   useEffect(() => {
     // attach the event listener
-    document.addEventListener('keyup', handleKeyPress);
+    document.addEventListener('keyup', handleKeyRegister);
 
     // remove the event listener
     return () => {
-      document.removeEventListener('keyup', handleKeyPress);
+      document.removeEventListener('keyup', handleKeyRegister);
     };
-  }, [handleKeyPress]);
+  }, [handleKeyRegister]);
 
   return (
-    <div className={className}>
-      {isListening && <div>Listening...</div>}
+    <div className={`${className} flex w-full items-center`}>
+      {(isListening || (!isListening && keyCombination.length > 0)) && (
+        <KeyCollection className="w-full" keys={keyCombination} />
+      )}
       {!isListening && (
         <button
-          className="btn-primary"
-          onClick={() => setIsListening(!isListening)}
+          className="btn-shadow ml-auto group-hover:bg-white"
+          onClick={() => startListening()}
         >
-          Listen
+          <BsKeyboardFill size={24} />
         </button>
       )}
     </div>
