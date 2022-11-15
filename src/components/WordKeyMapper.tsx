@@ -3,22 +3,48 @@ import { useEffect, useState } from 'react';
 import { CgTrash } from 'react-icons/cg';
 import settingsManager from '../composables/useSetting';
 import KeyRegister from './KeyRegister';
+import WakeWordSelector from './WakeWordSelector';
 
 export interface WordKeyMap {
+  name?: string;
   wordPath?: string;
   keyCombination?: string[];
 }
 
-const WordKeyMapper = () => {
+interface Props {
+  set: (keys: WordKeyMap[]) => void;
+}
+
+const WordKeyMapper = ({ set }: Props) => {
   const [wordKeyMap, setWordKeyMap] = useState<WordKeyMap[]>([]);
   const [animationParent] = useAutoAnimate();
 
   useEffect(() => {
-    async () => {
+    (async () => {
       const c = await settingsManager.get('wordKeyMap');
       setWordKeyMap(c);
-    };
+    })();
   }, []);
+
+  const setName = (i: number, name: string) => {
+    const newWordKeyMap = [...wordKeyMap];
+    newWordKeyMap[i].name = name;
+    setWordKeyMap(newWordKeyMap);
+
+    settingsManager.set('wordKeyMap', newWordKeyMap);
+
+    set(newWordKeyMap);
+  };
+
+  const setPpn = (i: number, path: string) => {
+    const newWordKeyMap = [...wordKeyMap];
+    newWordKeyMap[i].wordPath = path;
+    setWordKeyMap(newWordKeyMap);
+
+    settingsManager.set('wordKeyMap', newWordKeyMap);
+
+    set(newWordKeyMap);
+  };
 
   const setKeyCombination = async (i: number, keyCombination: string[]) => {
     const newWordKeyMap = [...wordKeyMap];
@@ -26,7 +52,8 @@ const WordKeyMapper = () => {
     setWordKeyMap(newWordKeyMap);
 
     settingsManager.set('wordKeyMap', newWordKeyMap);
-    console.log(settingsManager.get('wordKeyMap'));
+
+    set(newWordKeyMap);
   };
 
   return (
@@ -47,10 +74,16 @@ const WordKeyMapper = () => {
                     type="text"
                     className="text-input-border-bottom"
                     placeholder="Name"
-                    value={wordKey.wordPath}
+                    value={wordKey.name}
+                    onChange={e => setName(i, e.target.value)}
                   />
                 </div>
-                <div className="col-span-3"></div>
+                <div className="col-span-3">
+                  <WakeWordSelector
+                    wakeWord={wordKey.wordPath}
+                    setSelected={(path: string) => setPpn(i, path)}
+                  />
+                </div>
                 <div className="col-span-5 flex items-center space-x-2">
                   <KeyRegister
                     className="m-auto"
@@ -59,7 +92,12 @@ const WordKeyMapper = () => {
                       setKeyCombination(i, keyCombination)
                     }
                   />
-                  <button className="btn-shadow ml-auto group-hover:bg-white">
+                  <button
+                    className="btn-shadow ml-auto group-hover:bg-white"
+                    onClick={() =>
+                      setWordKeyMap(wordKeyMap.filter((_, j) => j !== i))
+                    }
+                  >
                     <CgTrash size={24} />
                   </button>
                 </div>
