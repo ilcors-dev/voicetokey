@@ -4,6 +4,7 @@
 )]
 
 mod audio;
+mod resource;
 mod run;
 
 fn main() {
@@ -11,7 +12,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             audio::get_audio_devices,
             run::run_voice_recognizer,
-            run::stop_voice_recognizer
+            run::stop_voice_recognizer,
+            resource::list_path_files
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
