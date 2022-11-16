@@ -1,5 +1,5 @@
-import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { useEffect, useState } from 'react';
+import autoAnimate from '@formkit/auto-animate';
+import { useEffect, useRef, useState } from 'react';
 import { CgTrash } from 'react-icons/cg';
 import settingsManager from '../composables/useSetting';
 import KeyRegister from './KeyRegister';
@@ -17,7 +17,11 @@ interface Props {
 
 const WordKeyMapper = ({ set }: Props) => {
   const [wordKeyMap, setWordKeyMap] = useState<WordKeyMap[]>([]);
-  const [animationParent] = useAutoAnimate();
+  const parent = useRef(null);
+
+  useEffect(() => {
+    parent.current && autoAnimate(parent.current);
+  }, [parent]);
 
   useEffect(() => {
     (async () => {
@@ -62,7 +66,7 @@ const WordKeyMapper = ({ set }: Props) => {
         <h1 className="text-2xl font-semibold">Key command mapping</h1>
       </div>
       <div>
-        <ul ref={animationParent}>
+        <ul ref={parent}>
           {wordKeyMap.map((wordKey, i) => (
             <li
               key={i}

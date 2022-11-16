@@ -1,4 +1,6 @@
+import autoAnimate from '@formkit/auto-animate';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { useEffect, useRef } from 'react';
 import Key from './Key';
 
 interface Props {
@@ -7,11 +9,15 @@ interface Props {
 }
 
 const KeyCollection = ({ className, keys }: Props) => {
-  const [animationParent] = useAutoAnimate();
+  const parent = useRef(null);
+
+  useEffect(() => {
+    parent.current && autoAnimate(parent.current);
+  }, [parent]);
 
   return (
     <ul
-      ref={animationParent}
+      ref={parent}
       className={`${className} flex flex-wrap items-center space-x-1`}
     >
       {keys.map((key, index) => (
