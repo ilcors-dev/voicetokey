@@ -1,5 +1,7 @@
+import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/tauri';
-import { useState } from 'react';
+import { appWindow } from '@tauri-apps/api/window';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface Props {
@@ -17,6 +19,14 @@ const VoiceRecognizerRun = ({
 }: Props) => {
   const [isListening, setIsListening] = useState(false);
 
+  useEffect(() => {
+    (async () => {
+      await listen('wake-word-detected', event => {
+        toast('Wake word detected, firing key combination.');
+      });
+    })();
+  }, []);
+
   const run = async () => {
     setIsListening(!isListening);
 
@@ -25,6 +35,7 @@ const VoiceRecognizerRun = ({
       inputDeviceIndex: inputDeviceIndex,
       keywordPaths: keywordPaths,
       modelPath: modelPath,
+      window: appWindow,
     });
 
     toast('Started listening.');

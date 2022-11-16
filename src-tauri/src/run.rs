@@ -9,6 +9,12 @@ use std::{
 
 static LISTENING: AtomicBool = AtomicBool::new(false);
 
+// the payload type must implement `Serialize` and `Clone`.
+#[derive(Clone, serde::Serialize)]
+struct Payload {
+    message: String,
+}
+
 /// Since the paths passed from tauri look something like this:
 /// \\\\?\\C:\\Users\\x\\x\\voicetokey\\src-tauri\\target\\debug\\resources\\wake-words-ppn\\fai-la-clip_it_mac_v2_1_0.ppn
 /// we need to remove the chars until the start of the disk path.
@@ -40,6 +46,7 @@ pub fn run_voice_recognizer(
     input_device_index: i32,
     keyword_paths: Vec<String>,
     model_path: String,
+    window: tauri::Window,
 ) {
     let mut enigo = Enigo::new();
 
@@ -88,6 +95,16 @@ pub fn run_voice_recognizer(
             let keyword_index = porcupine.process(&pcm).unwrap();
             if keyword_index >= 0 {
                 println!("[{}] clippo!", Local::now().format("%F %T"));
+
+                window
+                    .emit(
+                        "wake-word-detected",
+                        Payload {
+                            message: "Wake word detected, firing key combination.".into(),
+                        },
+                    )
+                    .unwrap();
+
                 enigo.key_down(enigo::Key::Alt);
                 enigo.key_click(enigo::Key::F10);
                 enigo.key_up(enigo::Key::Alt);
@@ -95,7 +112,7 @@ pub fn run_voice_recognizer(
         }
     });
 
-    println!("\nStopping...");
+    // println!("\nStopping...");
     // recorder.stop().expect("Failed to stop audio recording");
 }
 
