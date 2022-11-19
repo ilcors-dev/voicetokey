@@ -13,9 +13,13 @@
     "allowlist": {
       "all": true,
       "fs": {
-        "all": true,
+        "createDir": true,
+        "readDir": true,
+        "readFile": true,
+        "writeFile": true,
         "scope": [
-          "**"
+          "$APPCONFIG",
+          "$APPCONFIG/*"
         ]
       }
     },
