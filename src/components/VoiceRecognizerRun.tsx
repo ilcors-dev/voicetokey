@@ -9,6 +9,7 @@ interface Props {
   inputDeviceIndex: number;
   keywordPaths: string[];
   modelPath: string;
+  disabled?: boolean;
 }
 
 const VoiceRecognizerRun = ({
@@ -16,6 +17,7 @@ const VoiceRecognizerRun = ({
   inputDeviceIndex,
   keywordPaths,
   modelPath,
+  disabled,
 }: Props) => {
   const [isListening, setIsListening] = useState(false);
 
@@ -27,7 +29,20 @@ const VoiceRecognizerRun = ({
     })();
   }, []);
 
+  const isDisabled = () => {
+    return (
+      disabled &&
+      toast.error(
+        'Select all options first (access token, audio device, key mapping).',
+      )
+    );
+  };
+
   const run = async () => {
+    if (isDisabled()) {
+      return;
+    }
+
     setIsListening(!isListening);
 
     await invoke('run_voice_recognizer', {

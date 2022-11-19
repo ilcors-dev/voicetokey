@@ -13,9 +13,16 @@ function App() {
   const [keywordPaths, setKeywordPaths] = useState<string[]>([]);
   const [modelPath, setModelPath] = useState('');
 
+  const canRun =
+    accessToken.length > 0 &&
+    selectedAudioDeviceIndex >= 0 &&
+    keywordPaths.length > 0 &&
+    modelPath.length > 0;
+
   useEffect(() => {
     (async () => {
       setAccessToken(await settingsManager.get('accessToken'));
+      setSelectedAudioDevice(await settingsManager.get('audioDevice'));
       setSelectedAudioDeviceIndex(
         await settingsManager.get('audioDeviceIndex'),
       );
@@ -54,6 +61,7 @@ function App() {
           keywordPaths={keywordPaths}
           modelPath={modelPath}
           inputDeviceIndex={selectedAudioDeviceIndex}
+          disabled={!canRun}
         />
       </div>
     </div>
