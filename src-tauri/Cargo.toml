@@ -23,6 +23,11 @@ ctrlc = "*"
 chrono = "*"
 dotenv_codegen = "*"
 enigo = { path = "./enigo", version = "0.0.14"}
+log = "^0.4"
+
+[dependencies.tauri-plugin-log]
+git = "https://github.com/tauri-apps/tauri-plugin-log"
+branch = "dev"
 
 [features]
 # by default Tauri runs in production mode
