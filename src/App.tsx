@@ -36,7 +36,7 @@ function App() {
   }, []);
 
   return (
-    <div className="px-20 py-10">
+    <div className="px-10 py-10 lg:px-20">
       <AccessToken
         accessToken={accessToken}
         setAccessToken={setAccessToken}
