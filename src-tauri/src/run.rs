@@ -8,6 +8,7 @@ use std::{
 };
 
 static LISTENING: AtomicBool = AtomicBool::new(false);
+static BOOTED: AtomicBool = AtomicBool::new(false);
 
 // the payload type must implement `Serialize` and `Clone`.
 #[derive(Clone, serde::Serialize)]
@@ -80,10 +81,14 @@ pub fn run_voice_recognizer(
     recorder.start().expect("Failed to start audio recording");
 
     LISTENING.store(true, Ordering::SeqCst);
-    ctrlc::set_handler(|| {
-        LISTENING.store(false, Ordering::SeqCst);
-    })
-    .expect("Unable to setup signal handler");
+
+    // fix, we shall not set an handler for ctrcl+c multiple times, the program would crash
+    if !BOOTED.load(Ordering::SeqCst) {
+        ctrlc::set_handler(|| {
+            LISTENING.store(false, Ordering::SeqCst);
+        })
+        .expect("Unable to setup signal handler");
+    }
 
     println!("Listening for wake words...");
 
@@ -114,6 +119,7 @@ pub fn run_voice_recognizer(
 
     // println!("\nStopping...");
     // recorder.stop().expect("Failed to stop audio recording");
+    BOOTED.store(true, Ordering::SeqCst);
 }
 
 #[tauri::command]
