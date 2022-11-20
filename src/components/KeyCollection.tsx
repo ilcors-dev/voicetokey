@@ -22,7 +22,7 @@ const KeyCollection = ({ className, keys }: Props) => {
     >
       {keys.map((key, index) => (
         <div className="flex items-center space-x-1">
-          <Key key={index} k={key} />
+          <Key key={`${index}-${key}`} k={key} />
           {index !== keys.length - 1 && <span>+</span>}
         </div>
       ))}
