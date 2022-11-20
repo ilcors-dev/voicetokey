@@ -12,11 +12,12 @@ export interface WordKeyMap {
 }
 
 interface Props {
+  wordKeyMap: WordKeyMap[];
   set: (keys: WordKeyMap[]) => void;
 }
 
-const WordKeyMapper = ({ set }: Props) => {
-  const [wordKeyMap, setWordKeyMap] = useState<WordKeyMap[]>([]);
+const WordKeyMapper = ({ set, wordKeyMap }: Props) => {
+  const [_wordKeyMap, setWordKeyMap] = useState<WordKeyMap[]>(wordKeyMap);
   const parent = useRef(null);
 
   useEffect(() => {
@@ -31,7 +32,7 @@ const WordKeyMapper = ({ set }: Props) => {
   }, []);
 
   const setName = (i: number, name: string) => {
-    const newWordKeyMap = [...wordKeyMap];
+    const newWordKeyMap = [..._wordKeyMap];
     newWordKeyMap[i].name = name;
     setWordKeyMap(newWordKeyMap);
 
@@ -41,7 +42,7 @@ const WordKeyMapper = ({ set }: Props) => {
   };
 
   const setPpn = (i: number, path: string) => {
-    const newWordKeyMap = [...wordKeyMap];
+    const newWordKeyMap = [..._wordKeyMap];
     newWordKeyMap[i].wordPath = path;
     setWordKeyMap(newWordKeyMap);
 
@@ -51,7 +52,7 @@ const WordKeyMapper = ({ set }: Props) => {
   };
 
   const setKeyCombination = async (i: number, keyCombination: string[]) => {
-    const newWordKeyMap = [...wordKeyMap];
+    const newWordKeyMap = [..._wordKeyMap];
     newWordKeyMap[i].keyCombination = keyCombination;
     setWordKeyMap(newWordKeyMap);
 
@@ -67,13 +68,13 @@ const WordKeyMapper = ({ set }: Props) => {
       </div>
       <div>
         <ul ref={parent}>
-          {wordKeyMap.map((wordKey, i) => (
+          {_wordKeyMap.map((wordKey, i) => (
             <li
               key={i}
               className="group mb-2 flex cursor-pointer items-center rounded border border-black p-4 hover:bg-gray-200 dark:border-gray-700"
             >
               <div className="grid w-full grid-cols-12 gap-2">
-                <div className="col-span-4">
+                {/* <div className="col-span-4">
                   <input
                     type="text"
                     className="text-input-border-bottom"
@@ -81,14 +82,14 @@ const WordKeyMapper = ({ set }: Props) => {
                     value={wordKey.name}
                     onChange={e => setName(i, e.target.value)}
                   />
-                </div>
-                <div className="col-span-3">
+                </div> */}
+                <div className="col-span-5">
                   <WakeWordSelector
                     wakeWord={wordKey.wordPath}
                     setSelected={(path: string) => setPpn(i, path)}
                   />
                 </div>
-                <div className="col-span-5 flex items-center space-x-2">
+                <div className="col-span-7 flex items-center space-x-2">
                   <KeyRegister
                     className="m-auto"
                     keys={wordKey.keyCombination ?? []}
@@ -99,7 +100,7 @@ const WordKeyMapper = ({ set }: Props) => {
                   <button
                     className="btn-shadow ml-auto group-hover:bg-white"
                     onClick={() =>
-                      setWordKeyMap(wordKeyMap.filter((_, j) => j !== i))
+                      setWordKeyMap(_wordKeyMap.filter((_, j) => j !== i))
                     }
                   >
                     <CgTrash size={24} />
@@ -112,7 +113,7 @@ const WordKeyMapper = ({ set }: Props) => {
       </div>
       <button
         className="btn-primary"
-        onClick={() => setWordKeyMap([...wordKeyMap, {}])}
+        onClick={() => setWordKeyMap([..._wordKeyMap, {}])}
       >
         Add
       </button>
