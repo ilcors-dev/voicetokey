@@ -3,12 +3,14 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { appWindow } from '@tauri-apps/api/window';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { WordKeyMap } from './WordKeyMapper';
 
 interface Props {
   accessToken: string;
   inputDeviceIndex: number;
   keywordPaths: string[];
   modelPath: string;
+  wordKeyMap: WordKeyMap[];
   disabled?: boolean;
 }
 
@@ -17,6 +19,7 @@ const VoiceRecognizerRun = ({
   inputDeviceIndex,
   keywordPaths,
   modelPath,
+  wordKeyMap,
   disabled,
 }: Props) => {
   const [isListening, setIsListening] = useState(false);
@@ -48,9 +51,10 @@ const VoiceRecognizerRun = ({
     await invoke('run_voice_recognizer', {
       accessKey: accessToken,
       inputDeviceIndex: inputDeviceIndex,
-      keywordPaths: keywordPaths,
+      keywordPaths: [wordKeyMap[0].wordPath],
       modelPath: modelPath,
       window: appWindow,
+      keyCombination: wordKeyMap[0].keyCombination,
     });
 
     toast('Started listening.');

@@ -12,11 +12,12 @@ function App() {
   const [selectedAudioDeviceIndex, setSelectedAudioDeviceIndex] = useState(0);
   const [keywordPaths, setKeywordPaths] = useState<string[]>([]);
   const [modelPath, setModelPath] = useState('');
+  const [wordKeyMap, setWordKeyMap] = useState<WordKeyMap[]>([]);
 
   const canRun =
     accessToken.length > 0 &&
     selectedAudioDeviceIndex >= 0 &&
-    keywordPaths.length > 0 &&
+    wordKeyMap.length > 0 &&
     modelPath.length > 0;
 
   useEffect(() => {
@@ -26,11 +27,8 @@ function App() {
       setSelectedAudioDeviceIndex(
         await settingsManager.get('audioDeviceIndex'),
       );
-      setKeywordPaths(
-        (await settingsManager.get('wordKeyMap')).map(
-          (wkm: WordKeyMap) => wkm.wordPath ?? '',
-        ),
-      );
+      setWordKeyMap(await settingsManager.get('wordKeyMap'));
+      setKeywordPaths(wordKeyMap.map((wkm: WordKeyMap) => wkm.wordPath ?? ''));
       setModelPath((await usePv().list())[0]);
     })();
   }, []);
@@ -50,9 +48,8 @@ function App() {
         className="mb-10"
       />
       <WordKeyMapper
-        set={(keys: WordKeyMap[]) =>
-          setKeywordPaths(keys.map(k => k.wordPath ?? ''))
-        }
+        wordKeyMap={wordKeyMap}
+        set={(keys: WordKeyMap[]) => setWordKeyMap(keys)}
       />
 
       <div className="mt-10">
@@ -62,6 +59,7 @@ function App() {
           modelPath={modelPath}
           inputDeviceIndex={selectedAudioDeviceIndex}
           disabled={!canRun}
+          wordKeyMap={wordKeyMap}
         />
       </div>
     </div>

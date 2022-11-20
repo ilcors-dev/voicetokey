@@ -6,6 +6,68 @@ use std::{
     sync::atomic::{AtomicBool, Ordering},
     thread,
 };
+use tauri::utils::assets::phf::phf_map;
+
+static KEYS: phf::Map<&'static str, enigo::Key> = phf_map! {
+    "a" => enigo::Key::Layout('a'),
+    "b" => enigo::Key::Layout('b'),
+    "c" => enigo::Key::Layout('c'),
+    "d" => enigo::Key::Layout('d'),
+    "e" => enigo::Key::Layout('e'),
+    "f" => enigo::Key::Layout('f'),
+    "g" => enigo::Key::Layout('g'),
+    "h" => enigo::Key::Layout('h'),
+    "i" => enigo::Key::Layout('i'),
+    "j" => enigo::Key::Layout('j'),
+    "k" => enigo::Key::Layout('k'),
+    "l" => enigo::Key::Layout('l'),
+    "m" => enigo::Key::Layout('m'),
+    "n" => enigo::Key::Layout('n'),
+    "o" => enigo::Key::Layout('o'),
+    "p" => enigo::Key::Layout('p'),
+    "q" => enigo::Key::Layout('q'),
+    "r" => enigo::Key::Layout('r'),
+    "s" => enigo::Key::Layout('s'),
+    "t" => enigo::Key::Layout('t'),
+    "u" => enigo::Key::Layout('u'),
+    "v" => enigo::Key::Layout('v'),
+    "w" => enigo::Key::Layout('w'),
+    "x" => enigo::Key::Layout('x'),
+    "y" => enigo::Key::Layout('y'),
+    "z" => enigo::Key::Layout('z'),
+    "up" => enigo::Key::UpArrow,
+    "down" => enigo::Key::DownArrow,
+    "left" => enigo::Key::LeftArrow,
+    "right" => enigo::Key::RightArrow,
+    "space" => enigo::Key::Space,
+    "enter" => enigo::Key::Return,
+    "tab" => enigo::Key::Tab,
+    "backspace" => enigo::Key::Backspace,
+    "escape" => enigo::Key::Escape,
+    "delete" => enigo::Key::Delete,
+    "home" => enigo::Key::Home,
+    "end" => enigo::Key::End,
+    "pageup" => enigo::Key::PageUp,
+    "pagedown" => enigo::Key::PageDown,
+    "capslock" => enigo::Key::CapsLock,
+    "f1" => enigo::Key::F1,
+    "f2" => enigo::Key::F2,
+    "f3" => enigo::Key::F3,
+    "f4" => enigo::Key::F4,
+    "f5" => enigo::Key::F5,
+    "f6" => enigo::Key::F6,
+    "f7" => enigo::Key::F7,
+    "f8" => enigo::Key::F8,
+    "f9" => enigo::Key::F9,
+    "f10" => enigo::Key::F10,
+    "f11" => enigo::Key::F11,
+    "f12" => enigo::Key::F12,
+    "ctrl" => enigo::Key::Control,
+    "alt" => enigo::Key::Alt,
+    "shift" => enigo::Key::Shift,
+    "option" => enigo::Key::Option,
+    "meta" => enigo::Key::Meta,
+};
 
 static LISTENING: AtomicBool = AtomicBool::new(false);
 static BOOTED: AtomicBool = AtomicBool::new(false);
@@ -48,6 +110,7 @@ pub fn run_voice_recognizer(
     keyword_paths: Vec<String>,
     model_path: String,
     window: tauri::Window,
+    key_combination: Vec<String>,
 ) {
     let mut enigo = Enigo::new();
 
@@ -56,6 +119,7 @@ pub fn run_voice_recognizer(
     println!("Input Device Index: {}", input_device_index);
     println!("Keyword Paths: {:?}", keyword_paths);
     println!("Model Path: {}", model_path);
+    println!("Key Combination: {:?}", key_combination);
 
     // sanitize paths of keyword_paths
     let sanitized_keyword_paths: Vec<String> = keyword_paths
@@ -110,9 +174,17 @@ pub fn run_voice_recognizer(
                     )
                     .unwrap();
 
-                enigo.key_down(enigo::Key::Alt);
-                enigo.key_click(enigo::Key::F10);
-                enigo.key_up(enigo::Key::Alt);
+                for key in key_combination.iter() {
+                    let key = key.to_lowercase();
+
+                    enigo.key_down(KEYS.get(key.as_str()).unwrap().clone());
+                }
+
+                for key in key_combination.iter() {
+                    let key = key.to_lowercase();
+
+                    enigo.key_up(KEYS.get(key.as_str()).unwrap().clone());
+                }
             }
         }
     });
