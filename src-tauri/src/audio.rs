@@ -1,24 +1,17 @@
-use pv_recorder::RecorderBuilder;
+use cpal::traits::{DeviceTrait, HostTrait};
 
 #[tauri::command]
 pub fn get_audio_devices() -> Vec<String> {
-    let mut devices = Vec::<String>::new();
+    let host = cpal::default_host();
+    let devices = host.input_devices().unwrap().enumerate();
+    let mut device_names = Vec::new();
 
-    let audio_devices = RecorderBuilder::new()
-        .init()
-        .expect("Failed to initialize pvrecorder")
-        .get_audio_devices();
+    for device in devices {
+        let device_name = device.1.name().unwrap();
+        device_names.push(device_name);
+    }
 
-    match audio_devices {
-        Ok(audio_devices) => {
-            for (_idx, device) in audio_devices.iter().enumerate() {
-                devices.push(String::from(device));
-            }
-        }
-        Err(err) => panic!("Failed to get audio devices: {}", err),
-    };
-
-    return devices;
+    return device_names;
 }
 
 // /**
