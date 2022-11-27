@@ -1,8 +1,10 @@
 use chrono::Local;
 use enigo::{Enigo, KeyboardControllable};
-use porcupine::{Porcupine, PorcupineBuilder};
+use log::{info, trace};
+use porcupine::PorcupineBuilder;
 use pv_recorder::RecorderBuilder;
 use std::{
+    path::Path,
     sync::atomic::{AtomicBool, Ordering},
     thread,
 };
@@ -111,15 +113,18 @@ pub fn run_voice_recognizer(
     model_path: String,
     window: tauri::Window,
     key_combination: Vec<String>,
+    porcupine_library_path: String,
+    recorder_library_path: String,
 ) {
+    info!("Starting voice recognizer");
     let mut enigo = Enigo::new();
 
     // print arguments
-    println!("Access Key: {}", access_key);
-    println!("Input Device Index: {}", input_device_index);
-    println!("Keyword Paths: {:?}", keyword_paths);
-    println!("Model Path: {}", model_path);
-    println!("Key Combination: {:?}", key_combination);
+    info!("Access Key: {}", access_key);
+    info!("Input Device Index: {}", input_device_index);
+    info!("Keyword Paths: {:?}", keyword_paths);
+    info!("Model Path: {}", model_path);
+    info!("Key Combination: {:?}", key_combination);
 
     // sanitize paths of keyword_paths
     let sanitized_keyword_paths: Vec<String> = keyword_paths
@@ -130,28 +135,73 @@ pub fn run_voice_recognizer(
     // print sanitized paths
     println!("Sanitized Keyword Paths: {:?}", sanitized_keyword_paths);
 
-    let porcupine: Porcupine =
+    let porcupine_result =
         PorcupineBuilder::new_with_keyword_paths(access_key, sanitized_keyword_paths.as_slice())
             .model_path(sanitize_path(model_path.as_str()))
-            .init()
-            .expect("Unable to create Porcupine");
+            .library_path(porcupine_library_path)
+            .init();
 
-    let recorder = RecorderBuilder::new()
+    let porcupine = match porcupine_result {
+        Ok(p) => {
+            println!("Porcupine initialized successfully");
+            info!("Porcupine initialized successfully");
+            p
+        }
+        Err(e) => {
+            println!("Error: {}", e);
+            trace!("Error: {}", e.to_string());
+            panic!("Error: {}", e);
+        }
+    };
+
+    let recorder_result = RecorderBuilder::new()
+        .library_path(Path::new(recorder_library_path.as_str()))
         .device_index(input_device_index)
         .frame_length(porcupine.frame_length() as i32)
-        .init()
-        .expect("Failed to initialize pvrecorder");
+        .init();
 
-    recorder.start().expect("Failed to start audio recording");
+    let recorder = match recorder_result {
+        Ok(r) => {
+            println!("Recorder initialized successfully");
+            info!("Recorder initialized successfully");
+            r
+        }
+        Err(e) => {
+            println!("Error: {}", e);
+            trace!("Error: {}", e);
+            panic!("Error: {}", e);
+        }
+    };
+
+    let result = recorder.start();
+
+    match result {
+        Ok(_) => {
+            println!("Recorder started successfully");
+            info!("Recorder started successfully");
+        }
+        Err(e) => {
+            println!("Error: {}", e);
+            trace!("Error: {}", e);
+            panic!("Error: {}", e);
+        }
+    }
 
     LISTENING.store(true, Ordering::SeqCst);
 
     // fix, we shall not set an handler for ctrcl+c multiple times, the program would crash
     if !BOOTED.load(Ordering::SeqCst) {
-        ctrlc::set_handler(|| {
-            LISTENING.store(false, Ordering::SeqCst);
-        })
-        .expect("Unable to setup signal handler");
+        match ctrlc::set_handler(|| LISTENING.store(false, Ordering::SeqCst)) {
+            Ok(_) => {
+                println!("Ctrl-C handler set successfully");
+                info!("Ctrl-C handler set successfully");
+            }
+            Err(e) => {
+                println!("Error: {}", e);
+                trace!("Error: {}", e);
+                panic!("Error: {}", e);
+            }
+        };
     }
 
     println!("Listening for wake words...");
@@ -159,7 +209,16 @@ pub fn run_voice_recognizer(
     thread::spawn(move || {
         while LISTENING.load(Ordering::SeqCst) {
             let mut pcm = vec![0; recorder.frame_length()];
-            recorder.read(&mut pcm).expect("Failed to read audio frame");
+            let result = recorder.read(&mut pcm);
+
+            match result {
+                Ok(_) => {}
+                Err(e) => {
+                    println!("Error: {}", e);
+                    trace!("Error: {}", e);
+                    panic!("Error: {}", e);
+                }
+            }
 
             let keyword_index = porcupine.process(&pcm).unwrap();
             if keyword_index >= 0 {

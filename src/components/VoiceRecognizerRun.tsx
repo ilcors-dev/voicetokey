@@ -1,8 +1,10 @@
 import { listen } from '@tauri-apps/api/event';
+import { resolveResource } from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api/tauri';
 import { appWindow } from '@tauri-apps/api/window';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { info } from 'tauri-plugin-log-api';
 import { WordKeyMap } from './WordKeyMapper';
 
 interface Props {
@@ -11,7 +13,6 @@ interface Props {
   keywordPaths: string[];
   modelPath: string;
   wordKeyMap: WordKeyMap[];
-  disabled?: boolean;
 }
 
 const VoiceRecognizerRun = ({
@@ -20,7 +21,6 @@ const VoiceRecognizerRun = ({
   keywordPaths,
   modelPath,
   wordKeyMap,
-  disabled,
 }: Props) => {
   const [isListening, setIsListening] = useState(false);
 
@@ -33,8 +33,18 @@ const VoiceRecognizerRun = ({
   }, []);
 
   const isDisabled = () => {
+    const canRun =
+      accessToken.length > 0 &&
+      inputDeviceIndex >= 0 &&
+      wordKeyMap.length > 0 &&
+      modelPath.length > 0;
+
+    info('input device selected index: ' + inputDeviceIndex);
+    info('wordKeyMap length: ' + wordKeyMap.length);
+    info('modelPath length: ' + modelPath.length);
+
     return (
-      disabled &&
+      !canRun &&
       toast.error(
         'Select all options first (access token, audio device, key mapping).',
       )
@@ -48,6 +58,11 @@ const VoiceRecognizerRun = ({
 
     setIsListening(!isListening);
 
+    let porcupineLibrary = await resolveResource(
+      'resources/libpv_porcupine.dll',
+    );
+    let recorderLibrary = await resolveResource('resources/libpv_recorder.dll');
+
     await invoke('run_voice_recognizer', {
       accessKey: accessToken,
       inputDeviceIndex: inputDeviceIndex,
@@ -55,6 +70,8 @@ const VoiceRecognizerRun = ({
       modelPath: modelPath,
       window: appWindow,
       keyCombination: wordKeyMap[0].keyCombination,
+      porcupineLibraryPath: porcupineLibrary,
+      recorderLibraryPath: recorderLibrary,
     });
 
     toast('Started listening.');

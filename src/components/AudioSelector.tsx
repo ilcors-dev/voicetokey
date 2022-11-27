@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api/tauri';
 import { useEffect, useState } from 'react';
 import settingsManager from '../composables/useSetting';
+import { info } from 'tauri-plugin-log-api';
 
 interface Props {
   setSelectedAudioDevice: (device: string) => void;
@@ -20,6 +21,9 @@ const AudioSelector = ({
   const [audioDevices, setAudioDevices] = useState<string[]>([]);
 
   const set = async (device: string) => {
+    info(
+      'selected device: ' + device + ' index: ' + audioDevices.indexOf(device),
+    );
     setSelectedAudioDevice(device);
     setSelectedAudioDeviceIndex(audioDevices.indexOf(device));
     settingsManager.setCache('audioDevice', device);

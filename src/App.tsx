@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import AccessToken from './components/AccessToken';
 import AudioSelector from './components/AudioSelector';
+import Settings from './components/Settings';
 import VoiceRecognizerRun from './components/VoiceRecognizerRun';
 import WordKeyMapper, { WordKeyMap } from './components/WordKeyMapper';
 import { usePv } from './composables/usePv';
@@ -14,22 +15,16 @@ function App() {
   const [modelPath, setModelPath] = useState('');
   const [wordKeyMap, setWordKeyMap] = useState<WordKeyMap[]>([]);
 
-  const canRun =
-    accessToken.length > 0 &&
-    selectedAudioDeviceIndex >= 0 &&
-    wordKeyMap.length > 0 &&
-    modelPath.length > 0;
-
   useEffect(() => {
     (async () => {
       setAccessToken(await settingsManager.get('accessToken'));
+      setModelPath((await usePv().list())[0]);
       setSelectedAudioDevice(await settingsManager.get('audioDevice'));
       setSelectedAudioDeviceIndex(
         await settingsManager.get('audioDeviceIndex'),
       );
       setWordKeyMap(await settingsManager.get('wordKeyMap'));
       setKeywordPaths(wordKeyMap.map((wkm: WordKeyMap) => wkm.wordPath ?? ''));
-      setModelPath((await usePv().list())[0]);
     })();
   }, []);
 
@@ -58,10 +53,10 @@ function App() {
           keywordPaths={keywordPaths}
           modelPath={modelPath}
           inputDeviceIndex={selectedAudioDeviceIndex}
-          disabled={!canRun}
           wordKeyMap={wordKeyMap}
         />
       </div>
+      <Settings className="mt-10" />
     </div>
   );
 }

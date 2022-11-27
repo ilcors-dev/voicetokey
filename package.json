@@ -22,6 +22,7 @@
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.6.0",
     "react-select": "^5.6.1",
+    "tauri-plugin-log-api": "github:tauri-apps/tauri-plugin-log#dev",
     "tauri-settings": "^0.1.2"
   },
   "devDependencies": {
