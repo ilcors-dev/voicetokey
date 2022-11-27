@@ -9,6 +9,7 @@ use tauri_plugin_log::{LogTarget, LoggerBuilder};
 mod audio;
 mod resource;
 mod run;
+mod settings;
 
 fn main() {
     tauri::Builder::default()
@@ -26,11 +27,15 @@ fn main() {
             audio::get_audio_devices,
             run::run_voice_recognizer,
             run::stop_voice_recognizer,
-            resource::list_path_files
+            resource::list_path_files,
+            settings::toggle_run_on_startup
         ])
         .setup(|app| {
             #[cfg(debug_assertions)]
             app.get_window("main").unwrap().open_devtools();
+
+            settings::start(app);
+
             Ok(())
         })
         .run(tauri::generate_context!())

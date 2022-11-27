@@ -10,6 +10,7 @@ type Schema = {
   audioDevice: string;
   audioDeviceIndex: number;
   wordKeyMap: WordKeyMap[];
+  openOnStartup: boolean;
 };
 
 const settingsManager = new SettingsManager<Schema>({
@@ -22,6 +23,7 @@ const settingsManager = new SettingsManager<Schema>({
   audioDevice: '',
   audioDeviceIndex: 0,
   wordKeyMap: [],
+  openOnStartup: true,
 });
 
 settingsManager.initialize().then(() => {});
