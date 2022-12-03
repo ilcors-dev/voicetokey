@@ -16,7 +16,7 @@ const KeyRegister = ({ className, keys, setKey }: Props) => {
 
   const startListening = () => {
     toast.custom(
-      <div className="rounded border border-black bg-white p-4 text-black">
+      <div className="rounded border-2 border-black bg-white p-4 text-black">
         <p>
           Press <b>any key</b> to register the combination.
         </p>

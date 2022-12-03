@@ -9,17 +9,17 @@ html {
 }
 
 .text-input {
-  @apply block w-full rounded border border-black p-2 text-sm text-gray-900 focus:border-black focus:ring-black  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-black dark:focus:ring-black;
+  @apply block w-full rounded border-2 border-black p-2 text-sm text-gray-900 focus:border-black focus:ring-black  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-black dark:focus:ring-black;
 }
 
 .text-input-border-bottom {
-  @apply block w-full rounded border border-x-0 border-t-0 border-black p-2 text-sm text-gray-900 focus:border-black focus:ring-black  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-black dark:focus:ring-black;
+  @apply block w-full rounded border-2 border-x-0 border-t-0 border-black p-2 text-sm text-gray-900 focus:border-black focus:ring-black  dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-black dark:focus:ring-black;
 }
 
 .btn-primary {
-  @apply rounded border border-black px-4 py-2 hover:bg-gray-200;
+  @apply rounded border-2 border-black px-4 py-2 hover:bg-gray-200;
 }
 
 .btn-shadow {
-  @apply rounded  bg-gray-200 px-4 py-2 shadow hover:bg-white;
+  @apply rounded bg-gray-200 px-4 py-2 shadow hover:bg-white;
 }

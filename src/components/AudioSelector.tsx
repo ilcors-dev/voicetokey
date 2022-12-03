@@ -50,7 +50,7 @@ const AudioSelector = ({
         {audioDevices.map((device, i) => (
           <div
             key={i}
-            className="mb-2 flex cursor-pointer items-center rounded border border-black pl-4 hover:bg-gray-200 dark:border-gray-700"
+            className="mb-2 flex cursor-pointer items-center rounded border-2 border-black pl-4 hover:bg-gray-200 dark:border-gray-700"
           >
             <input
               id={`${device}-${i}-input`}

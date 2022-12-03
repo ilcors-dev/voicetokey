@@ -48,7 +48,7 @@ const WakeWordSelector = ({ wakeWord, setSelected }: Props) => {
               borderBottom: '1px solid #000',
             }),
             menu: (provided, state) => ({
-              border: '1px solid #000',
+              border: '2px solid #000',
               borderRadius: '0.25rem',
               background: '#fff',
             }),

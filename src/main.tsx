@@ -8,7 +8,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Toaster
       toastOptions={{
-        className: 'border border-black rounded text-black',
+        className: 'border-2 border-black rounded text-black',
       }}
     />
     <App />

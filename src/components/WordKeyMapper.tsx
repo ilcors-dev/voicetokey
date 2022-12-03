@@ -71,7 +71,7 @@ const WordKeyMapper = ({ set, wordKeyMap }: Props) => {
           {_wordKeyMap.map((wordKey, i) => (
             <li
               key={i}
-              className="group mb-2 flex cursor-pointer items-center rounded border border-black p-4 hover:bg-gray-200 dark:border-gray-700"
+              className="group mb-2 flex cursor-pointer items-center rounded border-2 border-black p-4 hover:bg-gray-200 dark:border-gray-700"
             >
               <div className="grid w-full grid-cols-12 gap-2">
                 {/* <div className="col-span-4">
