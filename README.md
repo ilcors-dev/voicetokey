@@ -1,7 +1,7 @@
-# Tauri + React + Typescript
+# Voice to key
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+Map your voice commands to keystrokes on your computer!
 
-## Recommended IDE Setup
+## Motivation
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+The reason why I built this little program is because I wantend to be able to fire the Nvidia GeForce Shadowplay "Clip feature" without having to manually trigger it during my Call Of Duty matches :). I shared it with some of my friends and it was kind of funny to hear the "Fai la clip" (in italian, translated "Clip it, Clip it!") phrase in concitated phases of the matches
